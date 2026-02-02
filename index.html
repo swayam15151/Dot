@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Focus Dot Indicator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #111; /* dark background */
+            color: #f3f3f3; /* light text for contrast */
+        }
+
+        #focus-dot {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background-color: #ffffff; /* white dot */
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 1000;
+            transition: opacity 0.3s ease-out, transform 0.15s ease-out;
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+            pointer-events: none; /* don't block clicks beneath the dot */
+        }
+
+        #focus-dot.show {
+            opacity: 1;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Test Page</h1>
+    <p>Interact anywhere on the page (click, move mouse, press keys) to show the white focus dot in the center. It auto-hides after 60 seconds of inactivity.</p>
+    </div>
+    <div id="focus-dot"></div>
+
+    <script>
+        const dot = document.getElementById('focus-dot');
+        let timeoutId;
+
+        function showDot() {
+            dot.classList.add('show');
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                dot.classList.remove('show');
+            }, 60000); // 60 seconds
+        }
+
+        function hideDot() {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            dot.classList.remove('show');
+        }
+
+        // Listen for user activity events
+        ['click', 'mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, showDot, true);
+        });
+
+        // Optional: Hide when window loses focus (tab switch)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                hideDot();
+            } else {
+                showDot();
+            }
+        });
+
+        // Initial hide
+        hideDot();
+    </script>
+</body>
+</html>
